@@ -3,249 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-<style>
-    *{
-        /* text-align: center; */
-        align-content: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    main{
-        background: rgb(255, 255, 255);
-    }
-    
-    .expenseCard{
-        width: 100%;
-        text-align: center;
-        align-content: center;
-    }
-    #expense{
-        background: rgb(51, 103, 236);
-        margin: 20px;
-        color: white;
-        font-size: 20px;
-        text-decoration: dotted;
-        width: 30%;
-        height: 90px;
-        text-align: center;
-        align-content: center;
-        display: inline-block;
-
-    }
-
-    #form-group{
-        box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.482);
-        border-radius: 20px;
-        margin: 20px;
-        height: 500px;
-        align-items: center;
-        justify-content: center;
-        background: white;
-    }
-
-    div{
-        margin: 20px;
-        text-align: left;
-        text-align: left;
-    }
-    input{
-        border-radius: 10px;
-        border: 1px solid rgb(189, 189, 189);
-        height: 40px;
-        width: 100%;
-    }
-    
-    select{
-        border: 1px solid rgb(189, 189, 189);
-        text-align: left;
-        height: 40px;
-        width: 100%;
-    }
-
-    .displayExpenses p{
-        color: red;
-    }
-    .displayExpenses span{
-        font-size: 20px;
-    }
-     button{
-        background: rgb(0, 122, 198);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        height: 40px;
-        width: 100px;
-    }
-    
-    @media (max-width: 600px) {
-            #expense {
-                width: 80%;
-            }
-        }
-</style>
-
+    <title>Personal Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-   <h1>Personal Expense Tracker</h1>
-   <p>Truck your daily expenses and manage your budget effectively</p>
-   <main>
-    <div class="expenseCard">
-    <div id="expense">
-        <p>Total Expenses</p>
-        <p class="price">$0.00</p>
-    </div>
+    <div class="container">
+        <header>
+            <h1>Personal Expense Tracker</h1>
+            <p>Track your daily expenses and manage your budget effectively</p>
+        </header>
         
-    <div id="expense">
-        <p>Expenses Count</p>
-        <p class="price">0</p>
-    </div>
-    </div>
-    
-    
-    <div id="form-group">
-        <h2>Add New Expense</h2>
-        <form action="">
-            <div>
-                <label for="itemName">Item Name</label>
-                <input type="text">
+<!-- expense card -->
+  <div class="card">
+            <div class="summary">
+                <div class="summary-card">
+                    <h3>Total Expenses</h3>
+                    <p id="total-expenses">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Expenses Count</h3>
+                    <p id="expenses-count">0</p>
+                </div>
             </div>
 
-            <div>
-                <label for="amount">Amount</label>
-                <input type="text">
-            </div>
-
-            <div>
-                <label for="category">Category</label>
-                <select>
-                    <option value="select category">Select category</option>
-                    <option value="select category">Food</option>
-                    <option value="select category">Transport</option>
-                    <option value="select category">Shopping</option>
-                    <option value="select category">Entertainment</option>
-                    <option value="select category">Bills</option>
-                    <option value="select category">Healthcare</option>
-                    <option value="select category">Other</option>
-                </select>
-            </div>
-
-            <div>
+        <div class="card">
+            <h2>Add New Expense</h2>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label for="item-name">Item Name</label>
+                    <input type="text" id="item-name" placeholder="e.g., Coffee" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
                 <button type="submit">Add Expense</button>
+            </form>
+        </div>
+        
+       
+            
+            <h2>Recent Expenses</h2>
+            <div id="expense-list" class="expense-list">
+                <div class="empty-state">No expenses recorded yet. Add your first expense above!</div>
             </div>
-           
-        </form>
-    </div>
-
-    <div class="displayExpenses">
-        <h2>Recent Expenses</h2>
-        <div class="expense-card">
-            <span>Transport</span>
-            <span>Car</span>
-            <p>$45.00</p>
-            <button>Delete</button>
         </div>
     </div>
-   </main>
-<script>
-    // Get expenses from localStorage or start with empty array
-    let expenses = localStorage.getItem('expenses') ? JSON.parse(localStorage.getItem('expenses')) : [];
-    
-    // Get form elements
-    const form = document.querySelector('form');
-    const nameInput = document.querySelector('input[type="text"]:first-of-type');
-    const amountInput = document.querySelector('input[type="text"]:nth-of-type(2)');
-    const categorySelect = document.querySelector('select');
-    
-    // Function to display expenses
-    function displayExpenses() {
-        // Clear current expenses display (except title)
-        const cards = document.querySelectorAll('.expense-card');
-        for (let i = 0; i < cards.length; i++) {
-            cards[i].remove();
+
+    <script>
+        // DOM Elements
+        const expenseForm = document.getElementById('expense-form');
+        const itemNameInput = document.getElementById('item-name');
+        const amountInput = document.getElementById('amount');
+        const categorySelect = document.getElementById('category');
+        const expenseList = document.getElementById('expense-list');
+        const totalExpensesElement = document.getElementById('total-expenses');
+        const expensesCountElement = document.getElementById('expenses-count');
+        
+        // Initialize expenses array from localStorage or empty array
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        
+        // Function to save expenses to localStorage
+        function saveExpenses() {
+            localStorage.setItem('expenses', JSON.stringify(expenses));
         }
         
-        // Calculate total
-        let total = 0;
-        
-        // Display each expense
-        for (let i = 0; i < expenses.length; i++) {
-            // Add to total
-            total += parseFloat(expenses[i].amount);
+        // Function to add a new expense
+        function addExpense(e) {
+            e.preventDefault();
             
-            // Create expense card
-            const card = document.createElement('div');
-            card.className = 'expense-card';
+            const expense = {
+                id: Date.now(),
+                itemName: itemNameInput.value,
+                amount: parseFloat(amountInput.value),
+                category: categorySelect.value,
+                date: new Date().toISOString()
+            };
             
-            // Add expense details
-            card.innerHTML = `
-                <span>${expenses[i].category}</span>
-                <span>${expenses[i].name}</span>
-                <p>$${parseFloat(expenses[i].amount).toFixed(2)}</p>
-                <button onclick="deleteExpense(${i})">Delete</button>
-            `;
+            expenses.push(expense);
+            saveExpenses();
+            renderExpenses();
+            updateSummary();
             
-            // Add card to display
-            document.querySelector('.displayExpenses').appendChild(card);
+            // Reset form
+            expenseForm.reset();
         }
         
-        // Update total and count
-        document.querySelector('.price:first-of-type').textContent = `$${total.toFixed(2)}`;
-        document.querySelector('.price:nth-of-type(2)').textContent = expenses.length;
-        
-        // Save to localStorage
-        localStorage.setItem('expenses', JSON.stringify(expenses));
-    }
-    
-    // Function to add expense
-    function addExpense(event) {
-        // Prevent form from submitting normally
-        event.preventDefault();
-        
-        // Get form values
-        const name = nameInput.value;
-        const amount = amountInput.value;
-        const category = categorySelect.value;
-        
-        // Check if all fields are filled
-        if (name === '' || amount === '' || category === 'select category') {
-            alert('Please fill in all fields correctly');
-            return;
+        // Function to delete an expense
+        function deleteExpense(id) {
+            expenses = expenses.filter(expense => expense.id !== id);
+            saveExpenses();
+            renderExpenses();
+            updateSummary();
         }
         
-        // Create new expense object
-        const expense = {
-            name: name,
-            amount: amount,
-            category: category
-        };
+        // Function to update the summary
+        function updateSummary() {
+            const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            totalExpensesElement.textContent = `$${total.toFixed(2)}`;
+            expensesCountElement.textContent = expenses.length;
+        }
         
-        // Add to expenses array
-        expenses.push(expense);
+        // Function to render the expense list
+        function renderExpenses() {
+            if (expenses.length === 0) {
+                expenseList.innerHTML = '<div class="empty-state">No expenses recorded yet. Add your first expense above!</div>';
+                return;
+            }
+            
+            // Sort expenses by date (newest first)
+            const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            expenseList.innerHTML = sortedExpenses.map(expense => `
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div>
+                            <span class="expense-category">${expense.category}</span>
+                            <span>${expense.itemName}</span>
+                        </div>
+                        <div class="expense-amount">$${expense.amount.toFixed(2)}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteExpense(${expense.id})">Delete</button>
+                </div>
+            `).join('');
+        }
         
-        // Update display
-        displayExpenses();
+        // Event Listeners
+        expenseForm.addEventListener('submit', addExpense);
         
-        // Reset form
-        nameInput.value = '';
-        amountInput.value = '';
-        categorySelect.value = 'select category';
-    }
-    
-    // Function to delete expense
-    function deleteExpense(index) {
-        // Remove expense from array
-        expenses.splice(index, 1);
-        
-        // Update display
-        displayExpenses();
-    }
-    
-    // Add event listener to form
-    form.addEventListener('submit', addExpense);
-    
-    // Initial display
-    displayExpenses();
-</script>
+        // Initial render
+        renderExpenses();
+        updateSummary();
+    </script>
 </body>
 </html>
